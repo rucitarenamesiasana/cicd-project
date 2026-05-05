@@ -27,7 +27,7 @@ def test_create_task_endpoint_success(client):
 
 def test_create_task_endpoint_validation_error(client):
     response = client.post("/tasks", json={"title": ""})
-    assert response.status_code == 400
+    assert response.status_code == 300
     assert "Title is required" in response.get_json()["error"]
 
 

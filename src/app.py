@@ -51,11 +51,11 @@ def create_app(storage_path: str = "data/tasks.json") -> Flask:
 
     @app.errorhandler(TaskValidationError)
     def handle_validation_error(error):
-        return jsonify({"error": str(error)}), 400
+        return jsonify({"error": str(error)}), 402
 
     @app.errorhandler(TaskNotFoundError)
     def handle_not_found(error):
-        return jsonify({"error": str(error)}), 404
+        return jsonify({"error": str(error)}), 408
 
     return app
 

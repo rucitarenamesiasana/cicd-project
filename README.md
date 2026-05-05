@@ -1,74 +1,156 @@
-# CI/CD Deployment Project to cPanel
+# Final Project Software Testing - Task Management API
 
-Project ini dibuat untuk memenuhi tugas Continuous Deployment.
+![CI](https://github.com/rucitarenamesiasana/cicd-project/actions/workflows/ci.yml/badge.svg)
 
-## Deskripsi
+## Deskripsi Aplikasi
 
-Website statis sederhana ini dideploy otomatis ke cPanel menggunakan GitHub Actions.
-Setiap perubahan yang di-push ke branch `main` akan menjalankan workflow deployment.
+Project ini adalah aplikasi **Task Management API** sederhana yang dibuat untuk Final Project mata kuliah Software Testing. Aplikasi menyediakan fitur untuk membuat, melihat, mengubah status, menghapus, dan melihat statistik task.
+
+Aplikasi dibuat agar mudah diuji dan memiliki automated testing yang berjalan otomatis menggunakan GitHub Actions sebagai Continuous Integration (CI).
+
+## Fitur Utama
+
+1. Membuat task baru dengan validasi input.
+2. Melihat daftar task dan detail task.
+3. Mengubah status task dan menghapus task.
+4. Melihat statistik task berdasarkan status dan prioritas.
 
 ## Teknologi
 
-- HTML, CSS
+- Python
+- Flask
+- Pytest
+- Pytest Coverage
 - GitHub Actions
-- FTP Deployment
-- cPanel Hosting
+- JSON file storage
 
-## Struktur Project
+## Struktur Repository
 
 ```text
 .
+├── .github/workflows/ci.yml
+├── data/
 ├── public/
-│   └── index.html
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
-├── .gitignore
-└── README.md
+├── src/
+│   ├── app.py
+│   ├── storage.py
+│   └── task_service.py
+├── tests/
+│   ├── test_app_integration.py
+│   └── test_task_service_unit.py
+├── README.md
+├── LAPORAN.md
+└── requirements.txt
 ```
 
-## Continuous Deployment Flow
+## Cara Menjalankan Aplikasi
 
-1. Developer melakukan push ke branch `main`.
-2. GitHub Actions menjalankan workflow `Deploy to cPanel via FTP`.
-3. Repository di-checkout.
-4. Folder `public/` diupload ke folder `/public_html/` pada cPanel melalui FTP.
-5. Website dapat diakses melalui domain hosting.
+1. Install dependencies:
 
-## GitHub Secrets yang Dibutuhkan
-
-Tambahkan secrets berikut di GitHub:
-
-| Secret Name | Keterangan |
-|---|---|
-| `FTP_SERVER` | Host FTP/cPanel, contoh: `melioracognitio.com` |
-| `FTP_USERNAME` | Username FTP/cPanel |
-| `FTP_PASSWORD` | Password FTP/cPanel |
-
-Path GitHub:
-
-```text
-Repository Settings > Secrets and variables > Actions > New repository secret
+```bash
+pip install -r requirements.txt
 ```
 
-## Cara Menjalankan Deployment
+2. Jalankan aplikasi:
 
-1. Upload project ini ke repository GitHub.
-2. Pastikan branch utama bernama `main`.
-3. Tambahkan GitHub Secrets.
-4. Push perubahan ke branch `main`.
-5. Buka tab `Actions` untuk melihat proses deployment.
+```bash
+python -m src.app
+```
 
-## Output yang Dikumpulkan
-
-Yang dikumpulkan adalah salah satu dari berikut:
-
-- Link repository GitHub
-- Link website yang sudah terdeploy
-
-Contoh:
+3. Buka endpoint:
 
 ```text
-https://github.com/username/cpanel-cicd-project
-https://melioracognitio.com/
+http://localhost:5000/health
+http://localhost:5000/tasks
+http://localhost:5000/stats
+```
+
+## Contoh Endpoint
+
+### Create Task
+
+```bash
+curl -X POST http://localhost:5000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar testing","description":"Mengerjakan final project","priority":"high"}'
+```
+
+### Update Status
+
+```bash
+curl -X PATCH http://localhost:5000/tasks/1/status \
+  -H "Content-Type: application/json" \
+  -d '{"status":"done"}'
+```
+
+## Cara Menjalankan Test
+
+```bash
+pytest
+```
+
+## Cara Menjalankan Test Coverage
+
+```bash
+pytest --cov=src --cov-report=term-missing --cov-report=xml
+```
+
+Target minimal coverage pada tugas adalah **60%**. Project ini disiapkan agar coverage berada di atas target minimal.
+
+## Strategi Pengujian
+
+### Unit Testing
+
+Unit test berfokus pada logika bisnis pada `TaskService`, seperti:
+
+- validasi title
+- validasi priority
+- validasi status
+- pembuatan task
+- update status
+- delete task
+- statistik task
+
+Jumlah unit test: **23 test case**.
+
+### Integration Testing
+
+Integration test berfokus pada endpoint API Flask, seperti:
+
+- health check
+- create task
+- validasi input API
+- get task
+- update status
+- delete task
+- statistik task
+
+Jumlah integration test: **7 test case**.
+
+## Continuous Integration
+
+Workflow GitHub Actions berada pada:
+
+```text
+.github/workflows/ci.yml
+```
+
+Workflow berjalan otomatis saat:
+
+- push ke branch `main`
+- pull request ke branch `main`
+
+Pipeline melakukan:
+
+1. Checkout repository
+2. Setup Python
+3. Install dependencies
+4. Build / syntax check
+5. Run test dengan coverage
+6. Upload coverage report sebagai artifact
+
+## Link Repository
+
+```text
+https://github.com/rucitarenamesiasana/cicd-project
 ```
